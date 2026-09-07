@@ -16,16 +16,11 @@ myFunction <- function(roads, car, packages) {
     stay <- 5
     right <- 6
     up <- 8
-   
-    # reutrns the distance in grid units from start to goal
-    heuristic <- function(start_pos, goal_pos) { 
-        abs(start_pos[1] - goal_pos[1]) + abs(start_pos[2] - goal_pos[2])
-    }
-
+    
+    print(roads)
+    stop()
     
     # find closest package
-
-
     if (car$load == 0) { # can you pickup a package or do you already have one
         # go pickup a package
         best <- NULL
@@ -67,6 +62,47 @@ myFunction <- function(roads, car, packages) {
     }
 
     return(car)
+}
+
+aStar <- function(roads, start, goal){
+  
+}
+
+neighbours <- function(position){
+  result <- matrix(nrow = 0, ncol = 2)
+  
+  if(position[1] < 10)
+    result <- rbind(result, c(position[1] + 1, position[2]))
+  if(position[1] > 1)
+    result <- rbind(result, c(position[1] - 1, position[2]))
+  if(position[2] < 10)
+    result <- rbind(result, c(position[1], position[2] + 1))
+  if(position[2] > 1)
+    result <- rbind(result, c(position[1], position[2] - 1))
+
+  return(result)
+}
+
+roadCost <- function(roads, from, to) {
+  if(from[1] < to[1])
+    return(roads$hroads[from[1], from[2]])
+  if(from[1] > to[1])
+    return(roads$hroads[from[1] - 1, from[2]])
+  if(from[2] > to[2])
+    return(roads$vroads[from[1], from[2] - 1])
+  if(from[2] < to[2])
+    return(roads$vroads[from[1], from[2]])
+  
+  return(0)
+}
+
+# reutrns the distance in grid units from start to goal
+heuristic <- function(start_pos, goal_pos) { 
+  abs(start_pos[1] - goal_pos[1]) + abs(start_pos[2] - goal_pos[2])
+}
+
+clamp <- function(x, lower, upper){
+  return(max(min(x, upper), lower))
 }
 
 # to run/test/use: R
