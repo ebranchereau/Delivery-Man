@@ -17,8 +17,8 @@ myFunction <- function(roads, car, packages) {
     right <- 6
     up <- 8
     
-    print(roads)
-    stop()
+    #print(roads)
+    #stop()
     
     # find closest package
     if (car$load == 0) { # can you pickup a package or do you already have one
@@ -48,24 +48,80 @@ myFunction <- function(roads, car, packages) {
         target_pos <- c(packages[car$load, 3], packages[car$load, 4]) # target pos becomes the drop off location of the held package
     }
 
-    # go to position
-    if (car$x < target_pos[1]) {
-        car$nextMove <- right
-    } else if (car$x > target_pos[1]) {
-        car$nextMove <- left
-    } else if (car$y < target_pos[2]) {
-        car$nextMove <- up
-    } else if (car$y > target_pos[2]) {
-        car$nextMove <- down
+    path <- aStar(roads, c(car$x, car$y), target_pos)
+    
+    if (is.null(path) || length(path) < 2) {
+      car$nextMove <- stay
     } else {
-        car$nextMove <- stay
+      nxt <- path[[2]]
+      car$nextMove <- if (nxt[1] > car$x) right
+      else if (nxt[1] < car$x) left
+      else if (nxt[2] > car$y) up
+      else down
     }
 
     return(car)
 }
-
+# here is the function for the assignment
 aStar <- function(roads, start, goal){
+  # helper function put tow values into string
+  key <- function(s) paste(s[1], s[2])
   
+  visited <- character(0)
+  frontier <- list()
+  
+  # Adding the start node into frontier
+  frontier[[key(start)]] <- list( estimated = heuristic(start, goal), cost = 0, state = start, prev = NULL )
+  # to trace our route backward
+  cameFrom <- list()
+  reachedGoal <- FALSE
+  
+  while (!reachedGoal && length(frontier) > 0) {
+    # loops through every item and extracts all values into a vector
+    ests <- sapply(frontier, function(e) e$estimated)
+    costs <- sapply(frontier, function(e) e$cost)
+    # finds the lowest estimated cost and which() finds node position (index)
+    tie <- which(ests == min(ests))
+    # here we break the tie by lowest cost 
+    i <- tie[which.min(costs[tie])]
+    
+    node <- frontier[[i]]
+    frontier[[i]] <- NULL
+    
+    state <- node$state 
+    if (!is.null(node$prev)) cameFrom[[key(state)]] <- node$prev
+    if (all(state == goal)){
+      reachedGoal <- TRUE
+    }else{
+      visited <- c(visited, key(state))
+      neighbour <- neighbours(state)
+      for (r in 1:nrow(neighbour)){
+        n <- neighbour[r,]
+        k <- key(n)
+        if ( k %in% visited) next
+        
+        d <- roadCost(roads, state, n)
+        g <- node$cost + d
+        costn <- g + heuristic(n, goal)
+        
+        if(!(k %in% names(frontier))){
+          frontier[[k]] <- list(estimated = costn, cost = g, state = n,prev = state)
+        }
+        else if (costn < frontier[[k]]$estimated) {
+        frontier[[k]] <- list(estimated = costn, cost = g, state = n, prev = state)
+        }
+      }
+    }
+  }
+  if (!reachedGoal) return(NULL)
+  
+  path <- list()
+  s <- goal
+  while (!is.null(s)){
+    path <- c(list(s), path)
+    s <- if (key(s) %in% names(cameFrom)) cameFrom[[key(s)]] else NULL 
+  }
+  return(path)
 }
 
 neighbours <- function(position){
