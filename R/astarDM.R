@@ -1,10 +1,10 @@
 #' astarDM
 #'
-#' This function will go through the grid using the A* algorithm, we have the equation
-#' f(x) = g(x) + h(x)...
+#' Selects a package target and computes the next move using A* search.
+#' The evaluation function is f(x) = g(x) + h(x).
 #' 
 #' @param roads See help documentation for the runDeliveryMan function
-#' @param cars See help documentation for the runDeliveryMan function
+#' @param car See help documentation for the runDeliveryMan function
 #' @param packages See help documentation for the runDeliveryMan function
 #' @return See help documentation for the runDeliveryMan function
 #' @export
@@ -64,7 +64,7 @@ myFunction <- function(roads, car, packages) {
 }
 # here is the function for the assignment
 aStar <- function(roads, start, goal){
-  # helper function put tow values into string
+  # Helper function that converts two coordinates into a string key
   key <- function(s) paste(s[1], s[2])
   
   visited <- character(0)
@@ -152,7 +152,7 @@ roadCost <- function(roads, from, to) {
   return(0)
 }
 
-# reutrns the distance in grid units from start to goal
+# Returns the Manhattan distance in grid units from start to goal
 heuristic <- function(start_pos, goal_pos) { 
   abs(start_pos[1] - goal_pos[1]) + abs(start_pos[2] - goal_pos[2])
 }
@@ -161,9 +161,4 @@ clamp <- function(x, lower, upper){
   return(max(min(x, upper), lower))
 }
 
-# to run/test/use: R
-#                  source("DeliverMan/astarDM.R")
-#                  runDeliveryMan(myFunction)
-#                  testDM(myFunction)
-
-# you need to change the seed in order for the results to be diffrrent
+# See README.md for installation, simulation, and testing instructions.

@@ -5,7 +5,7 @@ Version: 1.2.0
 Author: Mike Ashcroft
 Maintainer: Andreina Francisco <maria.andreina.francisco@farmbio.uu.se>
 Description: Code for the Delivery Man project in the Uppsala University AI course.
-License: What license is it under?
+License: file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 NeedsCompilation: no
